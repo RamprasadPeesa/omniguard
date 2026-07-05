@@ -81,17 +81,28 @@ async function sendHeartbeat(status: string, currentScanId?: string) {
 }
 
 async function claimNextScan(): Promise<{ scanId: string; repositoryId: string; organizationId: string } | null> {
-  const { data, error } = await supabase.rpc("claim_next_scan", { worker_id: WORKER_ID });
+  try {
+    const { data, error } = await supabase.rpc("claim_next_scan", { p_worker_id: WORKER_ID });
 
-  if (error || !data) {
+    if (error) {
+      console.error("RPC error:", error);
+      return null;
+    }
+
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      return null;
+    }
+
+    const row = Array.isArray(data) ? data[0] : data;
+    return {
+      scanId: row.scan_id,
+      repositoryId: row.repository_id,
+      organizationId: row.organization_id
+    };
+  } catch (err) {
+    console.error("claimNextScan error:", err);
     return null;
   }
-
-  return {
-    scanId: data.scan_id,
-    repositoryId: data.repository_id,
-    organizationId: data.organization_id
-  };
 }
 
 async function runScans(files: ScanFile[]): Promise<{ findings: Finding[]; summary: Record<string, number> }> {
