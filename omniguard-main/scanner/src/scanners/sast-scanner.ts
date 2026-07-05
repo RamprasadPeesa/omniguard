@@ -386,10 +386,8 @@ export class SASTScanner extends BaseScanner {
         severity: 'medium',
         languages: ['javascript', 'typescript', 'python'],
         patterns: [
-          { pattern: 'app\\.post\\s*\\(["\']
-/login["\']', message: 'Login endpoint without rate limiting' },
-          { pattern: '@app\\.route\\s*\\(["\']
-/login["\']', message: 'Python login route without rate limiting' },
+          { pattern: 'app\\.post\\s*\\(["\'/login["\']', message: 'Login endpoint without rate limiting' },
+          { pattern: '@app\\.route\\s*\\(["\'/login["\']', message: 'Python login route without rate limiting' },
           { pattern: 'express-rate-limit', message: 'Rate limiting may be configured (verify)' }
         ],
         owasp: ['A07:2021 - Identification and Authentication Failures'],
