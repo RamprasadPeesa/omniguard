@@ -50,14 +50,14 @@ fi
 
 # Run full repository scan via API
 if [ -n "$OMNIGUARD_API_KEY" ]; then
-  repository=$(git remote get-url "$remote" 2>/dev/null | sed 's/.*github.com[/:]//' | sed 's/.git$//')
+  repository=$(git remote get-url "$remote\" 2>/dev/null | sed 's/.*github.com[/:]//' | sed 's/.git$//')
 
   echo -e "${GREEN}[OmniGuard] Triggering full scan for $repository...${NC}"
 
   response=$(curl -s -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $OMNIGUARD_API_KEY" \
-    -d "{\"repository\":\"$repository\",\"branch\":\"$current_branch\",\"trigger\":\"pre-push\"}" \
+    -H "Content-Type: application/json\" \
+    -H "Authorization: Bearer $OMNIGUARD_API_KEY\" \
+    -d "{\"repository\":\"$repository\",\"branch\":\"$current_branch\",\"trigger\":\"pre-push\"}\" \
     "${OMNIGUARD_URL}/scans")
 
   scan_id=$(echo "$response" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
@@ -70,7 +70,7 @@ if [ -n "$OMNIGUARD_API_KEY" ]; then
     timeout=60
     elapsed=0
     while [ $elapsed -lt $timeout ]; do
-      status=$(curl -s -H "Authorization: Bearer $OMNIGUARD_API_KEY" \
+      status=$(curl -s -H "Authorization: Bearer $OMNIGUARD_API_KEY\" \
         "${OMNIGUARD_URL}/scans/$scan_id" | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
 
       if [ "$status" = "completed" ]; then
@@ -87,7 +87,7 @@ if [ -n "$OMNIGUARD_API_KEY" ]; then
     echo ""
 
     # Get results
-    results=$(curl -s -H "Authorization: Bearer $OMNIGUARD_API_KEY" \
+    results=$(curl -s -H "Authorization: Bearer $OMNIGUARD_API_KEY\" \
       "${OMNIGUARD_URL}/scans/$scan_id")
 
     critical=$(echo "$results" | grep -o '"critical":[0-9]*' | grep -o '[0-9]*' || echo "0")
